@@ -5,6 +5,7 @@ import com.hazelcast.core.Hazelcast;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.Collections;
 
 public class Server {
@@ -12,33 +13,38 @@ public class Server {
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
     public static void main(String[] args) {
-        logger.info(" Server Starting ...");
 
-        // Config
+        //Mask
+        String maybeMask = System.getProperty("mask");
+        String mask = maybeMask != null ? maybeMask :"127.0.0.*";
+        Collection<String> interfaces = Collections.singletonList(mask);
+
+        //Config
         Config config = new Config();
 
-        // Group Config
-        GroupConfig groupConfig = new GroupConfig().setName("g12").setPassword("g12-pass");
+        //Configure group
+        GroupConfig groupConfig = new GroupConfig()
+                .setName("g12")
+                .setPassword("g12-pass");
         config.setGroupConfig(groupConfig);
 
-        // Network Config
+        MultiMapConfig multiMapConfig = new MultiMapConfig();
+        multiMapConfig.setName("default");
+        multiMapConfig.setValueCollectionType(MultiMapConfig.ValueCollectionType.LIST);
+        config.addMultiMapConfig(multiMapConfig);
+
+        //Network config
         MulticastConfig multicastConfig = new MulticastConfig();
-
         JoinConfig joinConfig = new JoinConfig().setMulticastConfig(multicastConfig);
-
         InterfacesConfig interfacesConfig = new InterfacesConfig()
-                .setInterfaces(Collections.singletonList("127.0.0.*")).setEnabled(true);
+                .setInterfaces(interfaces)
+                .setEnabled(true);
 
-        NetworkConfig networkConfig = new NetworkConfig().setInterfaces(interfacesConfig).setJoin(joinConfig);
+        NetworkConfig networkConfig = new NetworkConfig()
+                .setInterfaces(interfacesConfig)
+                .setJoin(joinConfig);
 
         config.setNetworkConfig(networkConfig);
-
-        // Opcional: Logger detallado
-//        java.util.logging.Logger rootLogger = LogManager.getLogManager().getLogger("");
-//        rootLogger.setLevel(Level.FINE);
-//        for (Handler h : rootLogger.getHandlers()) {
-//            h.setLevel(Level.FINE);
-//        }
 
         // Start cluster
         Hazelcast.newHazelcastInstance(config);

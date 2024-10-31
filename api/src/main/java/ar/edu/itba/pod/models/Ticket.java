@@ -11,29 +11,36 @@ import java.time.LocalDateTime;
 
 public class Ticket implements DataSerializable, Serializable {
     private String plate;
-    private int infractionId;
+    private String infractionId;
+
+
+
+    private String infractionDescription;
     private Double fineAmount;
     private String issuingAgency;
     private LocalDateTime issueDate;
     private String countyName;
 
-    public Ticket(String plate, int infractionId, Double fineAmount, String issuingAgency, LocalDateTime issueDate, String countyName) {
+    public Ticket() {
+        // Constructor sin argumentos necesario para la deserialización
+    }
+
+    public Ticket(String plate, String infractionId, String infractionDescription, Double fineAmount, String issuingAgency, LocalDateTime issueDate, String countyName) {
         this.plate = plate;
         this.infractionId = infractionId;
+        this.infractionDescription = infractionDescription;
         this.fineAmount = fineAmount;
         this.issuingAgency = issuingAgency;
         this.issueDate = issueDate;
         this.countyName = countyName;
-    }
-    public Ticket() {
-        // Constructor sin argumentos necesario para la deserialización
     }
 
 
     @Override
     public void writeData(ObjectDataOutput out) throws IOException {
         out.writeUTF(plate);
-        out.writeInt(infractionId);
+        out.writeUTF(infractionId);
+        out.writeUTF(infractionDescription);
         out.writeDouble(fineAmount);
         out.writeUTF(issuingAgency);
         out.writeObject(issueDate);
@@ -43,7 +50,8 @@ public class Ticket implements DataSerializable, Serializable {
     @Override
     public void readData(ObjectDataInput in) throws IOException {
         plate = in.readUTF();
-        infractionId = in.readInt();
+        infractionId = in.readUTF();
+        infractionDescription = in.readUTF();
         fineAmount = in.readDouble();
         issuingAgency = in.readUTF();
         issueDate = in.readObject();
@@ -54,7 +62,7 @@ public class Ticket implements DataSerializable, Serializable {
         return plate;
     }
 
-    public Integer getInfractionId() {
+    public String getInfractionId() {
         return infractionId;
     }
 
@@ -72,5 +80,9 @@ public class Ticket implements DataSerializable, Serializable {
 
     public String getCountyName() {
         return countyName;
+    }
+
+    public String getInfractionDescription() {
+        return infractionDescription;
     }
 }

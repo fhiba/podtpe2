@@ -5,10 +5,10 @@ public class Query1Result {
     private final String agency;
     private final Integer tickets;
 
-    public Query1Result(String infraction, String agency, Integer tickets) {
+    public Query1Result(String infraction, String agency) {
         this.infraction = infraction;
         this.agency = agency;
-        this.tickets = tickets;
+        this.tickets = 0;
     }
 
     public String getInfraction() {

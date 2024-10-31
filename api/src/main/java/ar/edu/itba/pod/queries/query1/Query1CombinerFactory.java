@@ -7,27 +7,21 @@ public class Query1CombinerFactory implements CombinerFactory<String, Integer, I
 
     @Override
     public Combiner<Integer, Integer> newCombiner(String key) {
-        return new Query1Combiner();
-    }
+        return new Combiner<Integer, Integer>() {
 
-    private static class Query1Combiner extends Combiner<Integer, Integer> {
-        private int sum = 0;
+            private int sum = 0;
 
-        @Override
-        public void combine(Integer value) {
-            sum += value;
-        }
+            @Override
+            public void combine(Integer value) {
+                sum += value;
+            }
 
-        @Override
-        public Integer finalizeChunk() {
-            int result = sum;
-            sum = 0; // Reiniciar el sumador para el próximo chunk
-            return result;
-        }
-
-        @Override
-        public void reset() {
-            sum = 0;
-        }
+            @Override
+            public Integer finalizeChunk() {
+                int result = sum;
+                sum = 0;
+                return result;
+            }
+        };
     }
 }
