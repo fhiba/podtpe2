@@ -1,4 +1,4 @@
-package ar.edu.itba.pod.client.queries;
+package ar.edu.itba.pod.client;
 import ar.edu.itba.pod.models.Infraction;
 import ar.edu.itba.pod.models.Ticket;
 import com.hazelcast.client.HazelcastClient;
@@ -6,12 +6,17 @@ import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Utils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Query1Client.class);
+
 
     public static HazelcastInstance getClient(String addresses){
         // Split addresses
@@ -72,6 +77,8 @@ public class Utils {
             DateTimeFormatter formatterCHI = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             DateTimeFormatter formatterNYC = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             while ((line = br.readLine()) != null) {
+                if(count % 10000 == 0)
+                    LOGGER.info("Readed "+count+" rows");
                 String[] tokens = line.split(";");
                 if (city.equalsIgnoreCase("CHI")) {
                     if (tokens.length >= 6) {
