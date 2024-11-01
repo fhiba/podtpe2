@@ -110,7 +110,7 @@ public class Utils {
                             count++;
                         }
                     }
-                } else if (city.equalsIgnoreCase("NYC")) {
+                } else if (city.equalsIgnoreCase("NYC") ||city.equalsIgnoreCase("Sample" )  ||city.equalsIgnoreCase("SampleQuery4")) {
                     if (tokens.length >= 6) {
                         String plate = tokens[0];
                         String infractionId = tokens[1];
