@@ -43,7 +43,7 @@ public class Query4Collator implements Collator<Map.Entry<String, MinMaxPair>, L
         infractionDiffs.sort((o1, o2) -> {
             int cmp = Double.compare(o2.getDiff(), o1.getDiff()); // Descending by Diff
             if (cmp == 0) {
-                cmp = o1.getInfraction().compareTo(o2.getInfraction()); // Alphabetical by Infraction
+                cmp = o2.getInfraction().compareTo(o1.getInfraction());
             }
             return cmp;
         });
