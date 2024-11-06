@@ -48,7 +48,7 @@ public class Query3Client {
         HazelcastInstance client = Utils.getClient(addresses);
 
         // Determine file names based on city
-        String ticketsFileName = "tickets" + city + "100k.csv";
+        String ticketsFileName = "tickets" + city + ".csv";
         String infractionsFileName = "infractions" + city + ".csv";
         String agenciesFileName = "agencies" + city + ".csv";
 
