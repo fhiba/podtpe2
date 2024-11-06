@@ -35,7 +35,7 @@ public class Query2Client {
         HazelcastInstance client = Utils.getClient(addresses);
 
         // Determine file names based on city
-        String ticketsFileName = "tickets" + city + "100k.csv";
+        String ticketsFileName = "tickets" + city + "1M.csv";
         String infractionsFileName = "infractions" + city + ".csv";
         String agenciesFileName = "agencies" + city + ".csv";
 
@@ -47,6 +47,17 @@ public class Query2Client {
         // Output files
         String outputFilePath = outPath + File.separator + "query2.csv";
         String timeFilePath = outPath + File.separator + "time2.txt";
+
+        // Delete time2.txt if it exists
+        File timeFile = new File(timeFilePath);
+        if (timeFile.exists()) {
+            timeFile.delete();
+        }
+        // Delete query2.csv if it exists
+        File outputFile = new File(outputFilePath);
+        if (outputFile.exists()) {
+            outputFile.delete();
+        }
 
         // Get references to distributed maps
         IMap<String, Infraction> infractionsMap = client.getMap("infractions");
@@ -73,7 +84,7 @@ public class Query2Client {
 
         JobCompletableFuture<List<String>> future = job
                 .mapper(new Query2Mapper())
-                .combiner(new Query2CombinerFactory())
+//                .combiner(new Query2CombinerFactory())
                 .reducer(new Query2ReducerFactory())
                 .submit(new Query2Collator());
 

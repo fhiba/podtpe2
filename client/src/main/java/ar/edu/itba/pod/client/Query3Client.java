@@ -60,6 +60,17 @@ public class Query3Client {
         String outputFilePath = outPath + File.separator + "query3.csv";
         String timeFilePath = outPath + File.separator + "time3.txt";
 
+        // Delete time3.txt if it exists
+        File timeFile = new File(timeFilePath);
+        if (timeFile.exists()) {
+            timeFile.delete();
+        }
+        // Delete query3.csv if it exists
+        File outputFile = new File(outputFilePath);
+        if (outputFile.exists()) {
+            outputFile.delete();
+        }
+
         // Get references to distributed maps
         IMap<String, Infraction> infractionsMap = client.getMap("infractions");
         IMap<String, String> agenciesMap = client.getMap("agencies");

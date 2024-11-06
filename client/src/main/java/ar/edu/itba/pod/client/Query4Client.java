@@ -57,6 +57,17 @@ public class Query4Client {
         String outputFilePath = outPath + File.separator + "query4.csv";
         String timeFilePath = outPath + File.separator + "time4.txt";
 
+        // Delete time4.txt if it exists
+        File timeFile = new File(timeFilePath);
+        if (timeFile.exists()) {
+            timeFile.delete();
+        }
+        // Delete query4.csv if it exists
+        File outputFile = new File(outputFilePath);
+        if (outputFile.exists()) {
+            outputFile.delete();
+        }
+
         // Get references to distributed maps
         IMap<String, Infraction> infractionsMap = client.getMap("infractions");
         IMap<String, String> agenciesMap = client.getMap("agencies");
