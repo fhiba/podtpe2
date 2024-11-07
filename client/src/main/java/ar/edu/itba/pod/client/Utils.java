@@ -78,15 +78,15 @@ public class Utils {
                                            IMap<String, String> agenciesMap,
                                            IMap<String, Ticket> ticketsMap) throws IOException {
 
-        final int BATCH_SIZE = 10000; // Puedes ajustar el tamaño del lote según tus necesidades
+        final int BATCH_SIZE = 1;
         Map<String, Ticket> batchMap = new HashMap<>();
 
-        // Cachear los mapas distribuidos localmente para evitar llamadas remotas
+        // Caching hazelcast maps to prevent remote calls
         Map<String, Infraction> localInfractionsMap = new HashMap<>(infractionsMap);
         Map<String, String> localAgenciesMap = new HashMap<>(agenciesMap);
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line = br.readLine(); // Omitir encabezado
+            String line = br.readLine();
             int count = 0;
             DateTimeFormatter formatterCHI = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             DateTimeFormatter formatterNYC = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -105,7 +105,6 @@ public class Utils {
                         String violationCode = tokens[4];
                         String fineAmountStr = tokens[5];
 
-                        // Usar los mapas locales para verificar si la infracción y la agencia son válidas
                         if (localInfractionsMap.containsKey(violationCode) && localAgenciesMap.containsKey(unitDescription)) {
                             LocalDateTime issueDate = LocalDateTime.parse(issueDateStr, formatterCHI);
                             Double fineAmount = Double.parseDouble(fineAmountStr);
@@ -122,12 +121,12 @@ public class Utils {
                                     issueDate,
                                     communityAreaName
                             );
-                            // Generar una clave única para el ticket usando el contador
+                            // Generate ids for tickets
                             String ticketKey = "ticket" + count;
                             batchMap.put(ticketKey, ticket);
                             count++;
 
-                            // Verificar si alcanzamos el tamaño del lote
+                            // Check batch size
                             if (batchMap.size() >= BATCH_SIZE) {
                                 ticketsMap.putAll(batchMap);
                                 batchMap.clear();
@@ -143,7 +142,7 @@ public class Utils {
                         String issueDateStr = tokens[4];
                         String countyName = tokens[5];
 
-                        // Usar los mapas locales para verificar si la infracción y la agencia son válidas
+
                         if (localInfractionsMap.containsKey(infractionId) && localAgenciesMap.containsKey(issuingAgency)) {
                             LocalDateTime issueDate = LocalDate.parse(issueDateStr, formatterNYC).atStartOfDay();
                             Double fineAmount = Double.parseDouble(fineAmountStr);
@@ -160,12 +159,12 @@ public class Utils {
                                     issueDate,
                                     countyName
                             );
-                            // Generar una clave única para el ticket usando el contador
+                            // Generate id for tickets
                             String ticketKey = "ticket" + count;
                             batchMap.put(ticketKey, ticket);
                             count++;
 
-                            // Verificar si alcanzamos el tamaño del lote
+                            // Check batch size
                             if (batchMap.size() >= BATCH_SIZE) {
                                 ticketsMap.putAll(batchMap);
                                 batchMap.clear();
@@ -174,7 +173,7 @@ public class Utils {
                     }
                 }
             }
-            // Insertar cualquier ticket restante en el último lote
+            // Insert batch remaining tickets into last batch
             if (!batchMap.isEmpty()) {
                 ticketsMap.putAll(batchMap);
             }
